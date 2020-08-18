@@ -1,0 +1,20 @@
+server:
+  servlet:
+    #配置访问时的路径
+    context-path: /
+spring:
+  #配置文件
+  profiles:
+    active: dev
+#mybaits-plus配置
+mybatis-plus:
+  mapper-locations: classpath:/mapper/**/**.xml
+  type-aliases-package: com.herocheer.zhsq.localservice.impl
+  configuration:
+    #打印sql日志
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+#日志配置
+logging:
+  config: classpath:logback-spring.xml
+  path: ${user.dir}/../zhsq_sys_log
