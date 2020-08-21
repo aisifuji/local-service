@@ -68,7 +68,7 @@ public class DeviceStatusSchedule {
      */
     @Scheduled(cron = "0 0 2 * * ?")
     private void delOldPicDirOrVideoDir(){
-        logger.info("开始清除本地d多余图片和视频。。。");
+        logger.info("开始清除本地多余图片和视频。。。");
         doDelDir(commonProperties.getAnalysisPicPath());
         doDelDir(commonProperties.getAnalysisVideoPath());
         doDelDir(commonProperties.getDnakeCatchBackgroundPicPath());

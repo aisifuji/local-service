@@ -42,7 +42,14 @@ public class DeviceRegisterServiceImpl implements DeviceRegisterService {
     @Override
     public List<DeviceRegister> queryList() {
         QueryWrapper<DeviceRegister> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("status","1");
+        queryWrapper.eq("device_status","1");
         return deviceRegisterMapper.selectList(queryWrapper);
+    }
+
+    @Override
+    public void deleteDeviceRegisterByDeviceSn(DeviceRegister deviceRegister) {
+        QueryWrapper<DeviceRegister> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("device_sn",deviceRegister.getDeviceSn());
+        deviceRegisterMapper.delete(queryWrapper);
     }
 }

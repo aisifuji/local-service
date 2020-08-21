@@ -1,4 +1,4 @@
-package com.herocheer.zhsq.localservice.core.device.DNAKE;
+package com.herocheer.zhsq.localservice.core.device.HaCamera;
 
 import com.ha.facecamera.configserver.ConfigServer;
 import com.ha.facecamera.configserver.ConfigServerConfig;
@@ -12,13 +12,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DNAKESdkHandler extends AbstractDeviceSdk {
+public class HaSdkHandler extends AbstractDeviceSdk {
     // 配置链路
     private  ConfigServer configServer;
     // 数据链路
     private  DataServer dataServer ;
 
-    private static final Logger logger = LoggerFactory.getLogger(DNAKESdkHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(HaSdkHandler.class);
 
     @Value("${dnake.camera.configPort}")
     private Integer configPort;
@@ -39,7 +39,7 @@ public class DNAKESdkHandler extends AbstractDeviceSdk {
     public Boolean sdkInit() {
 
         if(this.isSdkInit){
-            logger.info("  ================== DNAKE-SDK已启动  ==================  ");
+            logger.info("  ================== HaCamera-SDK已启动  ==================  ");
             return true;
         }
         configServer = new ConfigServer();

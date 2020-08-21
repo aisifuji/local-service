@@ -22,12 +22,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLHandshakeException;
 import java.io.*;
-import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.*;
@@ -42,9 +40,9 @@ public class AnalysisDevice extends AbstractDevice {
     //设备类型
     private static final Integer deviceType = 40;
     //设备厂商标志
-    private static final Integer brand = 40;
+    private static final Integer brand = 60;
     //设备支持功能
-    private static final Integer deviceSupFun1 = 10; //设备支持的功能 下发人脸
+    private static final Integer deviceSupFun1 = 10; //视频行为分析
     @Value("${analysis.picPath}")
     private String picPath;
     @Value("${analysis.linuxPath}")

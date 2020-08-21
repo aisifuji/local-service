@@ -1,12 +1,10 @@
-package com.herocheer.zhsq.localservice.core.device.DNAKE;
+package com.herocheer.zhsq.localservice.core.device.HaCamera;
 
 import com.ha.facecamera.configserver.pojo.Face;
 import com.ha.facecamera.configserver.pojo.Gateopening;
 import com.herocheer.zhsq.localservice.core.device.AbstractDevice;
-import com.herocheer.zhsq.localservice.core.device.Device;
 import com.herocheer.zhsq.localservice.core.device.entity.*;
 import com.herocheer.zhsq.localservice.core.exception.CheckedException;
-import com.herocheer.zhsq.localservice.core.exception.DeviceException;
 import com.herocheer.zhsq.localservice.core.util.FileUtil;
 import com.herocheer.zhsq.localservice.core.util.ImageUtil;
 import com.herocheer.zhsq.localservice.core.util.SpringUtil;
@@ -18,32 +16,33 @@ import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 @Component
-public class DNAKEGuardDevice extends AbstractDevice {
+public class HaGuardDevice extends AbstractDevice {
 
     @Autowired
-    private DNAKESdkHandler dnakeSdkHandler;
+    private HaSdkHandler haSdkHandler;
 
     //设备类型
     private static final Integer deviceType = 10;
     //设备厂商标志
-    private static final Integer brand = 20;
+    private static final Integer brand = 40;
     //设备支持功能
-    private static final Integer deviceSupFun1 = 10; //设备支持的功能 下发人脸
-    private static final Integer deviceSupFun2 = 20; //设备支持的功能 下发卡片
-    private static final Integer deviceSupFun3 = 40; //测温
+    private static final Integer deviceSupFun1 = 00; //二维码
+    private static final Integer deviceSupFun2 = 10; //人脸
+    private static final Integer deviceSupFun3 = 20; //ID卡
+    private static final Integer deviceSupFun4 = 40; //测温
+    private static final Integer deviceSupFun5 = 50; //口罩
+    private static final Integer deviceSupFun6 = 60; //远程开门
 
-    private static final Logger logger = LoggerFactory.getLogger(DNAKEGuardDevice.class);
+    private static final Logger logger = LoggerFactory.getLogger(HaGuardDevice.class);
 
     private volatile Boolean isOpenCapture = false;
 
-    protected DNAKEGuardDevice() {
-        super(deviceType, brand, Arrays.asList(deviceSupFun1,deviceSupFun2,deviceSupFun3));
+    protected HaGuardDevice() {
+        super(deviceType, brand, Arrays.asList(deviceSupFun1,deviceSupFun2,deviceSupFun3,deviceSupFun4,deviceSupFun5,deviceSupFun6));
     }
 
 
@@ -132,7 +131,7 @@ public class DNAKEGuardDevice extends AbstractDevice {
 //            return;
 //        }
         logger.info("======================启动抓拍================");
-        dnakeSdkHandler.getDataServer().onCaptureCompareDataReceived((data)->{
+        haSdkHandler.getDataServer().onCaptureCompareDataReceived((data)->{
             logger.info("======================抓拍成功，用户编号data.getPersonID()：" + data.getPersonID());
             logger.info("======================抓拍成功，用户卡号data.getWiegandNo1()：" + data.getWiegandNo1());
             logger.info("======================抓拍成功，人像匹配度data.getMatchScore()：" + data.getMatchScore());
@@ -152,8 +151,8 @@ public class DNAKEGuardDevice extends AbstractDevice {
             Date capTime = data.getCaptureTime();
             String date = df.format(capTime);
             String datetime = sdf.format(capTime);
-            String preFacePath = dnakeSdkHandler.getCatchFacePicPath() + date +"/";
-            String preBackground = dnakeSdkHandler.getCatchBackgroundPicPath() + date +"/";
+            String preFacePath = haSdkHandler.getCatchFacePicPath() + date +"/";
+            String preBackground = haSdkHandler.getCatchBackgroundPicPath() + date +"/";
 
             if((data.getMatchScore()>0&&data.getMatchScore()<100&&!StringUtils.isEmpty(data.getPersonID()))||(data.getTemperature()>0.0&&!StringUtils.isEmpty(data.getPersonID()))){
                 openDoorType = "10";//刷脸
@@ -207,10 +206,10 @@ public class DNAKEGuardDevice extends AbstractDevice {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        boolean cameraOnlineState = dnakeSdkHandler.getConfigServer().getCameraOnlineState(baseDevice.getDeviceSn());
+        boolean cameraOnlineState = haSdkHandler.getConfigServer().getCameraOnlineState(baseDevice.getDeviceSn());
         logger.info("设备序列号：{}，在线情况：{}",baseDevice.getDeviceSn(), cameraOnlineState?"在线":"离线");
 
-        return new DeviceResponse(cameraOnlineState,"返回码："+dnakeSdkHandler.getConfigServer().getLastErrorCode()+"返回信息:"+dnakeSdkHandler.getConfigServer().getLastErrorMsg());
+        return new DeviceResponse(cameraOnlineState,"返回码："+ haSdkHandler.getConfigServer().getLastErrorCode()+"返回信息:"+ haSdkHandler.getConfigServer().getLastErrorMsg());
     }
 
     public void setVoice(String deviceSn,String successVoice){
@@ -219,7 +218,7 @@ public class DNAKEGuardDevice extends AbstractDevice {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        dnakeSdkHandler.getConfigServer().setVoiceplayback(deviceSn, successVoice, dnakeSdkHandler.getTimeoutInMs());
+        haSdkHandler.getConfigServer().setVoiceplayback(deviceSn, successVoice, haSdkHandler.getTimeoutInMs());
     }
 
     @Override
@@ -234,11 +233,11 @@ public class DNAKEGuardDevice extends AbstractDevice {
         gateopening.setControlpattern((byte)1);
         gateopening.setControlid((byte)11);
         gateopening.setEmpid("userSelf");
-        boolean isSuccess = dnakeSdkHandler.getConfigServer().setGateopen(baseDevice.getDeviceSn(), gateopening, dnakeSdkHandler.getTimeoutInMs());
+        boolean isSuccess = haSdkHandler.getConfigServer().setGateopen(baseDevice.getDeviceSn(), gateopening, haSdkHandler.getTimeoutInMs());
         if(isSuccess){
-            setVoice(baseDevice.getDeviceSn(),dnakeSdkHandler.getSuccessVoice());
+            setVoice(baseDevice.getDeviceSn(), haSdkHandler.getSuccessVoice());
         }
-        return new DeviceResponse(isSuccess,"返回码："+dnakeSdkHandler.getConfigServer().getLastErrorCode()+"返回信息:"+dnakeSdkHandler.getConfigServer().getLastErrorMsg());
+        return new DeviceResponse(isSuccess,"返回码："+ haSdkHandler.getConfigServer().getLastErrorCode()+"返回信息:"+ haSdkHandler.getConfigServer().getLastErrorMsg());
     }
 
     public DeviceResponse setOrUpdateOrDelFace(BaseDevice baseDevice, BaseFace baseFace,String op){
@@ -259,7 +258,7 @@ public class DNAKEGuardDevice extends AbstractDevice {
         //下卡默认是白名单
         face.setRole(1);
         face.setWiegandNo(Long.valueOf(baseCard.getCardNo()));
-        face.setJpgFilePath(new String[]{dnakeSdkHandler.getDefaultFacePicPath()});
+        face.setJpgFilePath(new String[]{haSdkHandler.getDefaultFacePicPath()});
         face.setStartDate(baseCard.getEffStartTime());
         face.setExpireDate(baseCard.getEffEndTime());
         return doSetOrUpdateOrDelFace(baseDevice.getDeviceSn(),face,op);
@@ -268,14 +267,14 @@ public class DNAKEGuardDevice extends AbstractDevice {
     public DeviceResponse doSetOrUpdateOrDelFace(String deviceSn,Face face,String op){
         boolean isSuccess = false;
         if("set".equals(op)){
-            isSuccess = dnakeSdkHandler.getConfigServer().addFace(deviceSn, face, dnakeSdkHandler.getTimeoutInMs());
+            isSuccess = haSdkHandler.getConfigServer().addFace(deviceSn, face, haSdkHandler.getTimeoutInMs());
         }else if("update".equals(op)){
-            isSuccess = dnakeSdkHandler.getConfigServer().modifyFace(deviceSn, face, dnakeSdkHandler.getTimeoutInMs());
+            isSuccess = haSdkHandler.getConfigServer().modifyFace(deviceSn, face, haSdkHandler.getTimeoutInMs());
         }else if("del".equals(op)){
-            isSuccess = dnakeSdkHandler.getConfigServer().deleteFace(deviceSn, face.getId(), dnakeSdkHandler.getTimeoutInMs());
+            isSuccess = haSdkHandler.getConfigServer().deleteFace(deviceSn, face.getId(), haSdkHandler.getTimeoutInMs());
         }else {
             throw new CheckedException("device-0008");
         }
-        return new DeviceResponse(isSuccess,"返回码："+dnakeSdkHandler.getConfigServer().getLastErrorCode()+"返回信息:"+dnakeSdkHandler.getConfigServer().getLastErrorMsg());
+        return new DeviceResponse(isSuccess,"返回码："+ haSdkHandler.getConfigServer().getLastErrorCode()+"返回信息:"+ haSdkHandler.getConfigServer().getLastErrorMsg());
     }
 }

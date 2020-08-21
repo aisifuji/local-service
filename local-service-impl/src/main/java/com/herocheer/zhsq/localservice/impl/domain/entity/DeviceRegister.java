@@ -97,6 +97,6 @@ public class DeviceRegister extends BaseEntity implements Serializable {
     /**
      * 启用标志
      */
-    private Integer status;
+    private Integer deviceStatus;
 
 }

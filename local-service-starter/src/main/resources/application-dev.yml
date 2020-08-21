@@ -59,7 +59,7 @@ spring:
           security.protocol: SASL_PLAINTEXT
           sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="admin-zhsq";
     consumer:
-      group-id: group-2 #群组ID
+      group-id: group-3 #群组ID
       enable-auto-commit: true
       auto-commit-interval: 1000
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
@@ -96,7 +96,7 @@ analysis:
 zhsq:
    cloud:
      api:
-       getToken: https://zhsq.zhixiservice.com/zhsq/sys/v1/sys/TokenController/getToken
+       getToken: https://scc.herocheer.com/zhsq/sys/v1/sys/TokenController/getToken
        uploadDeviceStatus: https://zhsq.zhixiservice.com/zhsq/sys/v1/sys/Service/ExternalServiceController/heartBeatProcess
        uploadRecStatus: https://zhsq.zhixiservice.com/zhsq/sys/v1/sys/Service/ExternalServiceController/sendTaskResult
        uploadCaptureEvent: https://zhsq.zhixiservice.com/zhsq/sys/v1/sys/Service/ExternalServiceController/sendPersonDisReCord
@@ -104,7 +104,7 @@ zhsq:
        uploadAnalysisEvent: https://zhsq.zhixiservice.com/zhsq/sys/v1/sys/Service/ExternalServiceController/sendAnalysisReCord
        uploadStranger: https://zhsq.zhixiservice.com/zhsq/sys/v1/sys/Service/ExternalServiceController/sendStranger
        #uploadAnalysisEvent: http://127.0.0.1:8090/v1/sys/Service/ExternalServiceController/sendAnalysisReCord
-     loginName: gangcheng002
+     loginName: admin
      password: 123456
 deviceCheck:
     interval: 100000

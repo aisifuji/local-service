@@ -14,7 +14,7 @@ public class DefaultDeviceFactory implements DeviceFactory {
                 .filter(entry->brand==entry.getValue().getBrand()&&deviceType==entry.getValue().getDeviceType() && deviceSupFun.stream()
                         .allMatch(x -> (entry.getValue().getDeviceSupFun().stream().anyMatch(y -> x == y))))
                             .findFirst();
-        if(null==collect.get()){
+        if(!collect.isPresent()){
            throw new CheckedException("sys-0001");
        }
       return collect.get().getValue();

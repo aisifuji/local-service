@@ -1,7 +1,6 @@
 package com.herocheer.zhsq.localservice.core.device.HIKVISON;
 
 import com.herocheer.zhsq.localservice.core.device.AbstractDevice;
-import com.herocheer.zhsq.localservice.core.device.Device;
 import com.herocheer.zhsq.localservice.core.device.entity.*;
 import com.herocheer.zhsq.localservice.core.exception.CheckedException;
 import com.sun.jna.ptr.IntByReference;
@@ -11,12 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 @Component
-public class HaCameraDevice extends AbstractDevice {
+public class HIkCameraDevice extends AbstractDevice {
 
 
     @Autowired
@@ -28,9 +25,9 @@ public class HaCameraDevice extends AbstractDevice {
     //设备支持功能
     private static final Integer deviceSupFun1 = 10; //摄像头下是普通IPC
 
-    private static final Logger logger = LoggerFactory.getLogger(HaCameraDevice.class);
+    private static final Logger logger = LoggerFactory.getLogger(HIkCameraDevice.class);
 
-    public HaCameraDevice() {
+    public HIkCameraDevice() {
         super(deviceType,brand, Arrays.asList(deviceSupFun1));
     }
 

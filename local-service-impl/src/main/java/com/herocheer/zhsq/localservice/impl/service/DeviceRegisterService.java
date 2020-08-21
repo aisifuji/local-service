@@ -13,4 +13,6 @@ public interface DeviceRegisterService {
 
     List<DeviceRegister> queryList();
 
+    void deleteDeviceRegisterByDeviceSn(DeviceRegister deviceRegister);
+
 }

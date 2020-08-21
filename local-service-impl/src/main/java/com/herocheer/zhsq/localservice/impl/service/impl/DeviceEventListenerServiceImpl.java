@@ -1,7 +1,6 @@
 package com.herocheer.zhsq.localservice.impl.service.impl;
 
-import com.herocheer.zhsq.localservice.core.base.RestResult;
-import com.herocheer.zhsq.localservice.core.device.DNAKE.DNAKEGuardDevice;
+import com.herocheer.zhsq.localservice.core.device.HaCamera.HaGuardDevice;
 import com.herocheer.zhsq.localservice.core.device.box.YTBox.YTBoxDevice;
 import com.herocheer.zhsq.localservice.core.device.entity.BaseDevice;
 import com.herocheer.zhsq.localservice.core.device.entity.BaseEvent;
@@ -30,7 +29,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 
 @Service("deviceEventListenerService")
@@ -238,7 +236,7 @@ public class DeviceEventListenerServiceImpl implements DeviceEventListenerServic
             case 3:
                 GuardCardMsg guardCardMsg = guardCardMsgService.queryOneByDeviceSnAndCardNo(baseEvent.getBaseDevice().getDeviceSn(), baseEvent.getCardNo());
 
-                DNAKEGuardDevice bean = SpringUtil.getBean(DNAKEGuardDevice.class);
+                HaGuardDevice bean = SpringUtil.getBean(HaGuardDevice.class);
                //没有卡
                 if(guardCardMsg==null){
                     bean.setVoice(baseEvent.getBaseDevice().getDeviceSn(),"未授权");

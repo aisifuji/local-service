@@ -1,19 +1,15 @@
 package com.herocheer.zhsq.localservice.core.device.box.YTBox;
 
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.herocheer.zhsq.localservice.core.device.AbstractDevice;
-import com.herocheer.zhsq.localservice.core.device.Device;
-import com.herocheer.zhsq.localservice.core.device.box.YTBox.dict.AgeEnum;
 import com.herocheer.zhsq.localservice.core.device.box.YTBox.dict.TypeEnum;
 import com.herocheer.zhsq.localservice.core.device.box.YTBox.pojo.CapturePushBean;
 import com.herocheer.zhsq.localservice.core.device.box.YTBox.pojo.CapturePushDTO;
 import com.herocheer.zhsq.localservice.core.device.box.YTBox.pojo.RetrievalResult;
 import com.herocheer.zhsq.localservice.core.device.box.YTBox.pojo.SimilarFace;
 import com.herocheer.zhsq.localservice.core.device.entity.*;
-import com.herocheer.zhsq.localservice.core.exception.CheckedException;
 import com.herocheer.zhsq.localservice.core.util.*;
 import okhttp3.*;
 import okio.Buffer;
@@ -47,7 +43,7 @@ public class YTBoxDevice extends AbstractDevice {
     //设备类型
     private static final Integer deviceType = 30;
     //设备厂商标志
-    private static final Integer brand = 30;
+    private static final Integer brand = 50;
     //设备支持功能
     private static final Integer deviceSupFun1 = 10; //设备支持的功能 下发人脸
 //    @Autowired
@@ -132,7 +128,7 @@ public class YTBoxDevice extends AbstractDevice {
         params.put("face_image", params2);
         YTBoxFace ytBoxFace = new YTBoxFace(baseFace.getUserId(),null,null,baseFace.getName());
         params.put("extra_meta", JSONObject.toJSONString(ytBoxFace));
-        JSONObject rep = request(registerDevice(baseDevice).getMessage(), params, String.format(YTBoxApi.SET_ONE_FACE, baseDevice.getIp(), baseDevice.getPort(), repositoryId, baseFace.getUserId()), HttpMethod.PUT);
+        JSONObject rep = request(doRegisterDevice(baseDevice).getMessage(), params, String.format(YTBoxApi.SET_ONE_FACE, baseDevice.getIp(), baseDevice.getPort(), repositoryId, baseFace.getUserId()), HttpMethod.PUT);
        if(null==rep){
            logger.info("YT智脑盒子下发人脸成功");
            return new DeviceResponse(true);
@@ -152,7 +148,7 @@ public class YTBoxDevice extends AbstractDevice {
 
     @Override
     public DeviceResponse delFace(BaseDevice baseDevice, BaseFace baseFace) {
-        JSONObject rep = request(registerDevice(baseDevice).getMessage(), null, String.format(YTBoxApi.DEL_ONE_FACE, baseDevice.getIp(), baseDevice.getPort(), repositoryId, baseFace.getUserId()), HttpMethod.DELETE);
+        JSONObject rep = request(doRegisterDevice(baseDevice).getMessage(), null, String.format(YTBoxApi.DEL_ONE_FACE, baseDevice.getIp(), baseDevice.getPort(), repositoryId, baseFace.getUserId()), HttpMethod.DELETE);
         if(null==rep){
             return new DeviceResponse(true);
         }
@@ -234,7 +230,9 @@ public class YTBoxDevice extends AbstractDevice {
             @Override
             public void onResponse(Call call, Response response) {
                 logger.info("onResponse headers: {}", response.headers());
+                if(null==FaceResultExecutor){
                     FaceResultExecutor = new FaceResultExecutor(faceResultEventHandler, baseDevice, response.header(YTBoxApi.SCHEMA_HEADER), httpClient);
+                }
                try {
                     /**
                      * 逐帧读取Response内容，放入处理队列
@@ -399,7 +397,7 @@ public class YTBoxDevice extends AbstractDevice {
     @Override
     public DeviceResponse isOnline(BaseDevice baseDevice) {
 
-        JSONObject rep = request(registerDevice(baseDevice).getMessage(), null, String.format(YTBoxApi.GET_BOX_ID, baseDevice.getIp(), baseDevice.getPort()),HttpMethod.GET);
+        JSONObject rep = request(doRegisterDevice(baseDevice).getMessage(), null, String.format(YTBoxApi.GET_BOX_ID, baseDevice.getIp(), baseDevice.getPort()),HttpMethod.GET);
         if(baseDevice.getDeviceSn().equals(rep.getString("id"))){
             logger.info("YT盒子在线情况：在线");
             return new DeviceResponse(true);
@@ -408,10 +406,6 @@ public class YTBoxDevice extends AbstractDevice {
         return new DeviceResponse(false,rep.getString("errMsg"));
     }
 
-//    @Override
-//    public Integer getBrand() {
-//        return this.brand;
-//    }
 
     @Override
     public DeviceResponse openGuardOrder(BaseDevice baseDevice) {

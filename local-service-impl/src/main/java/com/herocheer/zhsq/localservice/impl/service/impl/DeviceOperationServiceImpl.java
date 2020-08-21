@@ -64,6 +64,10 @@ public class DeviceOperationServiceImpl implements DeviceOperationService {
         Assert.hasText(deviceRegister.getLoginIp(),"deviceIp is empty");
         Assert.hasText(deviceRegister.getAccount(),"device account is empty");
         Assert.hasText(deviceRegister.getPassword(),"device password is empty");
+        if("30".equals(deviceRegister.getOpType())){
+            registerService.deleteDeviceRegisterByDeviceSn(deviceRegister);
+            return new DeviceResponse(true,"删除设备成功");
+        }
         //获取设备实例
         Device device = getDeviceInstance(deviceRegister);
         BaseDevice baseDevice = new BaseDevice(deviceRegister.getDeviceSn(),deviceRegister.getLoginIp(),deviceRegister.getAccount(),deviceRegister.getPassword(),deviceRegister.getPort());
@@ -120,7 +124,7 @@ public class DeviceOperationServiceImpl implements DeviceOperationService {
         Assert.notNull(faceMsg.getId(),"faceId is empty");
         //获取设备详情
         DeviceRegister deviceInfo = queryDevice(deviceRegister.getDeviceSn());
-        //获取设备实例
+        //获取设备实例ka
         Device device = getDeviceInstance(deviceInfo);
         BaseDevice baseDevice = new BaseDevice(deviceInfo.getDeviceSn(),deviceInfo.getLoginIp(),deviceInfo.getAccount(),deviceInfo.getPassword(),deviceInfo.getPort());
         String picPath = FileUtil.makeDynmicsDateDir(commonProperties.getPicWhiteDownloadLocalPath()+SerialNoUtil.getSerialNo())+".jpg";
